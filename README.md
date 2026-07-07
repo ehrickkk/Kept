@@ -1,6 +1,5 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Kept
+Kept is a running scrapbook of a year, one photo and one note at a time. Not everything needs to be remembered perfectly, some things just need to be kept.
 
 Currently, two official plugins are available:
 
