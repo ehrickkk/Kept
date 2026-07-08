@@ -40,13 +40,13 @@ export function PhotoCard({
         className="group w-full cursor-pointer bg-transparent text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         aria-label={`View photo: ${photo.caption || 'Untitled'}`}
       >
-        <div className="rounded border border-border bg-surface p-2 transition-colors group-hover:border-accent/60">
-          <div className="relative aspect-[4/5] overflow-hidden bg-background">
+        <div className="rounded-xl border border-border bg-surface p-4 transition-colors group-hover:border-accent/60">
+          <div className="relative aspect-4/5 overflow-hidden bg-background">
             <img
               src={photo.image_url}
               alt={photo.caption || 'Photo'}
               loading="lazy"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-md"
             />
             {isAdmin && onDelete && (
               <button
@@ -54,9 +54,9 @@ export function PhotoCard({
                 onClick={handleDelete}
                 disabled={deleting}
                 aria-label="Delete photo"
-                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted opacity-0 transition hover:border-accent hover:text-accent group-hover:opacity-100 disabled:opacity-50"
+                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted opacity-0 transition hover:border-red-500 hover:text-red-400 group-hover:opacity-100 disabled:opacity-50"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
             )}
           </div>

@@ -132,7 +132,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Upload photo"
-            className="relative z-10 w-full max-w-md rounded border border-border bg-surface p-6"
+            className="relative z-10 w-full max-w-xl rounded-[16px] border border-border bg-surface p-6"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -164,7 +164,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded border border-dashed p-4 transition-colors ${
+                className={`flex min-h-[180px] cursor-pointer flex-col items-center justify-center rounded border border-dashed p-4 transition-colors ${
                   dragOver
                     ? 'border-accent bg-accent/5'
                     : 'border-border bg-background hover:border-accent/50'
@@ -184,7 +184,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
                   <img
                     src={previewUrl}
                     alt="Preview"
-                    className="max-h-28 object-contain"
+                    className="max-h-[220px] object-contain"
                   />
                 ) : (
                   <p className="text-center text-sm text-text-muted">

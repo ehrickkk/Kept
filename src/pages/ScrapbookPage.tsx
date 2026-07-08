@@ -68,12 +68,12 @@ export function ScrapbookPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="relative px-4 pb-4 pt-20 text-center sm:pt-24 md:pt-28">
+      <header className="relative px-4 pb-15 pt-20 text-center sm:pt-24 md:pt-28">
         <h1 className="font-display text-4xl font-bold tracking-tight text-text-primary md:text-5xl">
           kept
         </h1>
         <p className="mt-2 font-mono-label text-xs uppercase tracking-widest text-text-muted">
-          contact sheet
+          Archive of Moments
         </p>
         <ViewModeToggle mode={viewMode} onChange={setViewMode} />
       </header>
@@ -93,16 +93,26 @@ export function ScrapbookPage() {
           </p>
         )}
 
-        {!loading && !error && monthGroups.map(([monthKey, monthPhotos]) => (
-          <SectionComponent
-            key={monthKey}
-            monthKey={monthKey}
-            photos={monthPhotos}
-            isAdmin={isAdmin}
-            onDelete={isAdmin ? handleDelete : undefined}
-            deletingId={deletingId}
-          />
-        ))}
+        {!loading && !error && monthGroups.length > 0 && (
+          <div
+            className={
+              viewMode === 'moment'
+                ? undefined
+                : 'grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3'
+            }
+          >
+            {monthGroups.map(([monthKey, monthPhotos]) => (
+              <SectionComponent
+                key={monthKey}
+                monthKey={monthKey}
+                photos={monthPhotos}
+                isAdmin={isAdmin}
+                onDelete={isAdmin ? handleDelete : undefined}
+                deletingId={deletingId}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       {isAdmin && (

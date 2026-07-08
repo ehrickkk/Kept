@@ -155,7 +155,7 @@ export function MonthCarouselModal({
                         <img
                           src={photo.image_url}
                           alt={photo.caption || 'Photo'}
-                          className="max-h-[50vh] w-full object-contain sm:max-h-[55vh]"
+                          className="max-h-[50vh] w-full object-contain sm:max-h-[65vh]"
                           draggable={false}
                         />
                         {isAdmin && onDelete && (
@@ -164,9 +164,9 @@ export function MonthCarouselModal({
                             onClick={(e) => handleDelete(e, photo)}
                             disabled={deletingId === photo.id}
                             aria-label="Delete photo"
-                            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-accent hover:text-accent disabled:opacity-50"
+                            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={16} />
                           </button>
                         )}
                       </div>

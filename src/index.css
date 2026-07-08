@@ -2,11 +2,13 @@
 
 @theme {
   --color-background: #14151a;
+  /* --color-surface: #2e2e2f; */
   --color-surface: #1c1d23;
-  --color-border: #2a2c33;
+  --color-border: #41434a;
+  /* --color-border: #2a2c33; */
   --color-text-primary: #e9e7e2;
-  --color-text-muted: #8a8c94;
-  --color-accent: #c87d3f;
+  --color-text-muted: #abacad;
+  --color-accent: #fdf4a6;
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
@@ -31,9 +33,9 @@ body {
 
 .glass-panel {
   background: rgba(28, 29, 35, 0.6);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #3a3c44;
+  border: 1px solid #50504c;
 }
 
 .input-dark {
@@ -92,7 +94,7 @@ body {
   width: 100%;
   border-radius: 0.375rem;
   border: 1px solid var(--color-border);
-  background-color: transparent;
+  /* background-color: transparent; */
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   color: var(--color-text-muted);
@@ -102,4 +104,63 @@ body {
 .btn-secondary:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+}
+
+.noise-texture {
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+.typewriter-cursor {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.filmstrip-track {
+  animation: filmstrip-scroll 45s linear infinite;
+}
+
+.filmstrip-track:hover {
+  animation-play-state: paused;
+}
+
+.filmstrip-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+@keyframes filmstrip-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-cursor {
+    animation: none;
+    opacity: 0;
+  }
+
+  .filmstrip-track {
+    animation: none;
+  }
 }
