@@ -13,9 +13,9 @@ interface MonthStackSectionProps {
 }
 
 const PEEK_LAYERS = [
-  { x: 4, y: 5 },
-  { x: 8, y: 9 },
-  { x: 12, y: 12 },
+  { x: 8, y: 5 },
+  { x: 14, y: 12 },
+  { x: 20, y: 19 },
 ]
 
 export function MonthStackSection({
@@ -46,7 +46,7 @@ export function MonthStackSection({
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
           onClick={() => setCarouselOpen(true)}
-          className="group relative w-full max-w-[260px] cursor-pointer bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+          className="group relative w-full max-w-[280px] cursor-pointer bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
           aria-label={`View ${photos.length} photos from ${formatMonthHeader(monthKey)}`}
         >
           <div className="relative">
@@ -54,7 +54,7 @@ export function MonthStackSection({
               PEEK_LAYERS.slice(0, peekCount).map((layer, i) => (
                 <div
                   key={i}
-                  className="absolute inset-0 rounded border border-border bg-surface"
+                  className="absolute inset-0 rounded-xl border border-border bg-surface"
                   style={{
                     transform: `translate(${layer.x}px, ${layer.y}px)`,
                     zIndex: i + 1,
@@ -64,16 +64,16 @@ export function MonthStackSection({
               ))}
 
             <div
-              className="relative rounded border border-border bg-surface p-2 transition-colors group-hover:border-accent/60"
+              className="relative rounded-xl border border-border bg-surface p-4 transition-colors group-hover:border-accent/60"
               style={{ zIndex: 10 }}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-background">
+              <div className="relative aspect-4/5 overflow-hidden bg-background">
                 <img
                   src={coverPhoto.image_url}
                   alt={coverPhoto.caption || 'Photo'}
                   loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+                  className="h-full w-full object-cover rounded-md"
+                  />
                 {showStack && (
                   <span className="absolute bottom-2 right-2 rounded border border-border bg-surface/90 px-2 py-0.5 font-mono-label text-[10px] tracking-wide text-text-muted">
                     {photos.length} photos
@@ -83,11 +83,11 @@ export function MonthStackSection({
 
               <div className="mt-2 border-t border-border pt-2">
                 {coverPhoto.caption && (
-                  <p className="line-clamp-2 text-sm leading-snug text-text-primary">
+                  <p className="line-clamp-2 text-[14px] text-left leading-snug text-text-primary">
                     {coverPhoto.caption}
                   </p>
                 )}
-                <p className="mt-1 font-mono-label text-[10px] tracking-wide text-text-muted">
+                <p className="mt-1 font-mono-label text-[10px] text-left tracking-wide text-text-muted">
                   {formatFrameDate(coverPhoto.date)}
                 </p>
               </div>

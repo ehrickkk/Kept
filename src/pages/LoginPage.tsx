@@ -40,7 +40,7 @@ export function LoginPage() {
       return
     }
 
-    navigate('/', { replace: true })
+    navigate('/home', { replace: true })
   }
 
   return (

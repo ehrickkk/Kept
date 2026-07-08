@@ -20,10 +20,9 @@ function NavIconLink({
     <NavLink
       to={to}
       end={end}
-      title={label}
       aria-label={label}
       className={({ isActive }) =>
-        `rounded-full p-2 transition-colors ${
+        `group relative flex h-10 items-center justify-center gap-2 rounded-full px-3 transition-colors duration-300 ease-out ${
           isActive
             ? 'text-accent'
             : 'text-text-muted hover:text-text-primary'
@@ -31,6 +30,7 @@ function NavIconLink({
       }
     >
       {icon}
+      <span className="text-sm font-medium">{label}</span>
     </NavLink>
   )
 }
@@ -54,39 +54,74 @@ export function PillNavBar() {
   }
 
   const userEmail = session?.user.email ?? ''
+  const accountActive =
+    accountOpen || (!session && location.pathname === '/login')
 
   return (
     <>
       <nav
         aria-label="Main navigation"
-        className="fixed left-1/2 top-3 z-40 -translate-x-1/2 sm:top-4"
+        className="fixed left-1/2 top-3 z-40 w-full max-w-5xl -translate-x-1/2 sm:top-4"
       >
-        <div className="glass-panel flex items-center gap-0.5 rounded-full px-1.5 py-1 sm:gap-1 sm:px-2">
+        <div className="glass-panel grid grid-cols-[1fr_auto_1fr] items-center rounded-full px-3 py-1 sm:px-5">
+          {/* Logo section */}
           <Link
             to="/"
-            className="font-display shrink-0 px-2 py-1 text-xs font-semibold tracking-widest text-text-primary transition-colors hover:text-accent sm:px-3 sm:text-sm"
-            aria-label="Kept home"
+            className="flex items-center justify-self-start gap-2 font-display px-1 py-1 text-xs font-semibold tracking-widest text-text-primary transition-colors duration-300 ease-out hover:text-accent sm:text-[18px]"
+            aria-label="Kept landing page"
           >
-            KPT
+            <span
+              aria-hidden="true"
+              className="h-6 w-6 bg-current transition-colors duration-300 ease-out"
+              style={{
+                maskImage: 'url(/public/kept-icon.png)',
+                WebkitMaskImage: 'url(/public/kept-icon.png)',
+                maskSize: 'contain',
+                WebkitMaskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                WebkitMaskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                WebkitMaskPosition: 'center',
+              }}
+            />
+            kept
           </Link>
 
-          <NavIconLink to="/" end label="Home" icon={<Home size={18} strokeWidth={1.75} />} />
-          <NavIconLink to="/about" label="About" icon={<Info size={18} strokeWidth={1.75} />} />
+          {/* Icons section */}
+          <div className="flex items-center justify-self-center gap-1 sm:gap-3">
+            {/* <span
+              aria-hidden="true"
+              className="mx-1 h-5 w-px bg-border sm:mx-2"
+            /> */}
 
-          <button
-            type="button"
-            onClick={handleAccountClick}
-            title="Account"
-            aria-label="Account"
-            aria-haspopup={session ? 'dialog' : undefined}
-            className={`rounded-full p-2 transition-colors ${
-              accountOpen || (!session && location.pathname === '/login')
-                ? 'text-accent'
-                : 'text-text-muted hover:text-text-primary'
-            }`}
-          >
-            <User size={18} strokeWidth={1.75} />
-          </button>
+            <NavIconLink
+              to="/home"
+              end
+              label="Home"
+              icon={<Home size={18} strokeWidth={1.75} />}
+            />
+            <NavIconLink
+              to="/about"
+              label="About"
+              icon={<Info size={18} strokeWidth={1.75} />}
+            />
+
+            <button
+              type="button"
+              onClick={handleAccountClick}
+              aria-label="Account"
+              aria-haspopup={session ? 'dialog' : undefined}
+              className={`group relative flex h-10 items-center justify-center gap-2 rounded-full px-3 transition-colors duration-300 ease-out ${
+                accountActive
+                  ? 'text-accent'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              <User size={18} strokeWidth={1.75} />
+              <span className="text-sm font-medium">Account</span>
+            </button>
+          </div>
+          <span aria-hidden="true" />
         </div>
       </nav>
 
