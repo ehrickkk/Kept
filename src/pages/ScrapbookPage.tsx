@@ -6,9 +6,10 @@ import { MonthSection } from '../components/MonthSection'
 import { MonthStackSection } from '../components/MonthStackSection'
 import { UploadModal } from '../components/UploadModal'
 import { ViewModeToggle, type ViewMode } from '../components/ViewModeToggle'
+import { YearOverviewSection } from '../components/YearOverviewSection'
 import { useAuth } from '../hooks/useAuth'
 import { deletePhoto, fetchPhotos } from '../lib/photos'
-import { groupPhotosByMonth } from '../lib/utils'
+import { groupPhotosByMonth, groupPhotosByYear } from '../lib/utils'
 import type { PhotoEntry } from '../types'
 
 export function ScrapbookPage() {
@@ -21,6 +22,7 @@ export function ScrapbookPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('moment')
   const [uploadOpen, setUploadOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [scrollToMonthKey, setScrollToMonthKey] = useState<string | null>(null)
 
   const loadPhotos = useCallback(async () => {
     setLoading(true)
@@ -45,6 +47,21 @@ export function ScrapbookPage() {
     return [...grouped.entries()].sort(([a], [b]) => b.localeCompare(a))
   }, [photos])
 
+  const yearSummaries = useMemo(() => groupPhotosByYear(photos), [photos])
+
+  useEffect(() => {
+    if (viewMode !== 'month' || !scrollToMonthKey) return
+
+    const targetId = `month-${scrollToMonthKey}`
+    const frame = window.requestAnimationFrame(() => {
+      const el = document.getElementById(targetId)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setScrollToMonthKey(null)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [viewMode, scrollToMonthKey, monthGroups])
+
   const handleUploadSuccess = (uploaded: PhotoEntry[]) => {
     setPhotos((prev) => [...uploaded, ...prev])
   }
@@ -64,7 +81,20 @@ export function ScrapbookPage() {
     }
   }
 
-  const SectionComponent = viewMode === 'moment' ? MonthSection : MonthStackSection
+  const openMonthViewAt = (monthKey: string) => {
+    setScrollToMonthKey(monthKey)
+    setViewMode('month')
+  }
+
+  const handleSelectYear = (year: string) => {
+    const firstMonth = monthGroups.find(([key]) => key.startsWith(`${year}-`))
+    if (firstMonth) openMonthViewAt(firstMonth[0])
+    else setViewMode('month')
+  }
+
+  const handleSelectMonth = (monthKey: string) => {
+    openMonthViewAt(monthKey)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,16 +123,33 @@ export function ScrapbookPage() {
           </p>
         )}
 
-        {!loading && !error && monthGroups.length > 0 && (
-          <div
-            className={
-              viewMode === 'moment'
-                ? undefined
-                : 'grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3'
-            }
-          >
+        {!loading && !error && photos.length > 0 && viewMode === 'year' && (
+          <YearOverviewSection
+            years={yearSummaries}
+            onSelectYear={handleSelectYear}
+            onSelectMonth={handleSelectMonth}
+          />
+        )}
+
+        {!loading && !error && monthGroups.length > 0 && viewMode === 'moment' && (
+          <div>
             {monthGroups.map(([monthKey, monthPhotos]) => (
-              <SectionComponent
+              <MonthSection
+                key={monthKey}
+                monthKey={monthKey}
+                photos={monthPhotos}
+                isAdmin={isAdmin}
+                onDelete={isAdmin ? handleDelete : undefined}
+                deletingId={deletingId}
+              />
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && monthGroups.length > 0 && viewMode === 'month' && (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {monthGroups.map(([monthKey, monthPhotos]) => (
+              <MonthStackSection
                 key={monthKey}
                 monthKey={monthKey}
                 photos={monthPhotos}

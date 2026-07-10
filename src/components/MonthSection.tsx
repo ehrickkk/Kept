@@ -27,12 +27,13 @@ export function MonthSection({
         {formatMonthHeader(monthKey)}
       </h2>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="columns-1 gap-x-2 sm:columns-2 lg:columns-4">
         {photos.map((photo, index) => (
           <PhotoCard
             key={photo.id}
             photo={photo}
             index={index}
+            isHero={index === 0}
             onClick={() => setSelectedPhoto(photo)}
             isAdmin={isAdmin}
             onDelete={onDelete}

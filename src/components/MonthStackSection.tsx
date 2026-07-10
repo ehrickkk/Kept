@@ -33,7 +33,7 @@ export function MonthStackSection({
   const peekCount = Math.min(photos.length - 1, 3)
 
   return (
-    <section className="mb-16">
+    <section id={`month-${monthKey}`} className="mb-16 scroll-mt-24">
       <h2 className="font-display mb-8 text-center text-2xl font-semibold tracking-tight text-text-primary md:text-3xl">
         {formatMonthHeader(monthKey)}
       </h2>

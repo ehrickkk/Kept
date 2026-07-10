@@ -29,6 +29,48 @@ export function groupPhotosByMonth(photos: PhotoEntry[]): Map<string, PhotoEntry
   return groups
 }
 
+export interface YearSummary {
+  year: string
+  totalFrames: number
+  /** Photo counts for Jan–Dec (index 0 = January) */
+  monthCounts: number[]
+  maxMonthCount: number
+}
+
+export function groupPhotosByYear(photos: PhotoEntry[]): YearSummary[] {
+  const byYear = new Map<string, number[]>()
+
+  for (const photo of photos) {
+    const parsed = parseISO(photo.date)
+    const year = format(parsed, 'yyyy')
+    const monthIndex = parsed.getMonth()
+
+    let counts = byYear.get(year)
+    if (!counts) {
+      counts = Array.from({ length: 12 }, () => 0)
+      byYear.set(year, counts)
+    }
+    counts[monthIndex] += 1
+  }
+
+  return [...byYear.entries()]
+    .map(([year, monthCounts]) => {
+      const totalFrames = monthCounts.reduce((sum, count) => sum + count, 0)
+      const maxMonthCount = Math.max(...monthCounts, 0)
+      return { year, totalFrames, monthCounts, maxMonthCount }
+    })
+    .sort((a, b) => b.year.localeCompare(a.year))
+}
+
+export function monthKeyFromYearMonth(year: string, monthIndex: number): string {
+  return `${year}-${String(monthIndex + 1).padStart(2, '0')}`
+}
+
+export function monthFillOpacity(count: number, maxCount: number): number {
+  if (count <= 0 || maxCount <= 0) return 0
+  return 0.28 + 0.72 * (count / maxCount)
+}
+
 export function formatMonthHeader(monthKey: string): string {
   const [year, month] = monthKey.split('-')
   const date = new Date(Number(year), Number(month) - 1, 1)
