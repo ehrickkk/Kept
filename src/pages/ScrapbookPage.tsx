@@ -45,8 +45,8 @@ export function ScrapbookPage() {
     return [...grouped.entries()].sort(([a], [b]) => b.localeCompare(a))
   }, [photos])
 
-  const handleUploadSuccess = (photo: PhotoEntry) => {
-    setPhotos((prev) => [photo, ...prev])
+  const handleUploadSuccess = (uploaded: PhotoEntry[]) => {
+    setPhotos((prev) => [...uploaded, ...prev])
   }
 
   const handleDelete = async (photo: PhotoEntry) => {
