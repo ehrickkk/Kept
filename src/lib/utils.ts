@@ -35,31 +35,66 @@ export interface YearSummary {
   /** Photo counts for Jan–Dec (index 0 = January) */
   monthCounts: number[]
   maxMonthCount: number
+  /** Most recent diary photo for the year — used when no custom cover is set */
+  fallbackImageUrl: string | null
 }
 
 export function groupPhotosByYear(photos: PhotoEntry[]): YearSummary[] {
-  const byYear = new Map<string, number[]>()
+  const byYear = new Map<
+    string,
+    { monthCounts: number[]; latestPhoto: PhotoEntry | null }
+  >()
 
   for (const photo of photos) {
     const parsed = parseISO(photo.date)
     const year = format(parsed, 'yyyy')
     const monthIndex = parsed.getMonth()
 
-    let counts = byYear.get(year)
-    if (!counts) {
-      counts = Array.from({ length: 12 }, () => 0)
-      byYear.set(year, counts)
+    let entry = byYear.get(year)
+    if (!entry) {
+      entry = {
+        monthCounts: Array.from({ length: 12 }, () => 0),
+        latestPhoto: null,
+      }
+      byYear.set(year, entry)
     }
-    counts[monthIndex] += 1
+
+    entry.monthCounts[monthIndex] += 1
+
+    if (
+      !entry.latestPhoto ||
+      parseISO(photo.date).getTime() > parseISO(entry.latestPhoto.date).getTime() ||
+      (photo.date === entry.latestPhoto.date &&
+        new Date(photo.created_at).getTime() >
+          new Date(entry.latestPhoto.created_at).getTime())
+    ) {
+      entry.latestPhoto = photo
+    }
   }
 
   return [...byYear.entries()]
-    .map(([year, monthCounts]) => {
+    .map(([year, { monthCounts, latestPhoto }]) => {
       const totalFrames = monthCounts.reduce((sum, count) => sum + count, 0)
       const maxMonthCount = Math.max(...monthCounts, 0)
-      return { year, totalFrames, monthCounts, maxMonthCount }
+      return {
+        year,
+        totalFrames,
+        monthCounts,
+        maxMonthCount,
+        fallbackImageUrl: latestPhoto?.image_url ?? null,
+      }
     })
     .sort((a, b) => b.year.localeCompare(a.year))
+}
+
+export function photosForYear(photos: PhotoEntry[], year: string): PhotoEntry[] {
+  return photos
+    .filter((photo) => format(parseISO(photo.date), 'yyyy') === year)
+    .sort((a, b) => {
+      const dateDiff = parseISO(b.date).getTime() - parseISO(a.date).getTime()
+      if (dateDiff !== 0) return dateDiff
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
 }
 
 export function monthKeyFromYearMonth(year: string, monthIndex: number): string {

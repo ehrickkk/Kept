@@ -1,108 +1,82 @@
-import {
-  monthFillOpacity,
-  monthKeyFromYearMonth,
-  type YearSummary,
-} from '../lib/utils'
-
-const MONTH_LABELS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-] as const
+import { ImagePlus } from 'lucide-react'
+import type { YearSummary } from '../lib/utils'
 
 interface YearOverviewSectionProps {
   years: YearSummary[]
+  coverByYear: Map<number, string>
+  isAdmin?: boolean
   onSelectYear: (year: string) => void
-  onSelectMonth: (monthKey: string) => void
+  onEditCover?: (year: string) => void
 }
 
 export function YearOverviewSection({
   years,
+  coverByYear,
+  isAdmin = false,
   onSelectYear,
-  onSelectMonth,
+  onEditCover,
 }: YearOverviewSectionProps) {
   if (years.length === 0) return null
 
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {years.map((summary) => (
-        <YearCard
-          key={summary.year}
-          summary={summary}
-          onSelectYear={onSelectYear}
-          onSelectMonth={onSelectMonth}
-        />
-      ))}
-    </div>
-  )
-}
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {years.map((summary) => {
+        const yearNum = Number(summary.year)
+        const coverUrl =
+          coverByYear.get(yearNum) ?? summary.fallbackImageUrl ?? null
+        const frameLabel =
+          summary.totalFrames === 1 ? '1' : String(summary.totalFrames)
 
-function YearCard({
-  summary,
-  onSelectYear,
-  onSelectMonth,
-}: {
-  summary: YearSummary
-  onSelectYear: (year: string) => void
-  onSelectMonth: (monthKey: string) => void
-}) {
-  const frameLabel = summary.totalFrames === 1 ? '1 frame' : `${summary.totalFrames} frames`
-
-  return (
-    <article className="group rounded-xl border border-border bg-surface p-4 transition-colors hover:border-accent/60">
-      <button
-        type="button"
-        onClick={() => onSelectYear(summary.year)}
-        className="w-full text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-        aria-label={`View ${summary.year} by month, ${frameLabel}`}
-      >
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-text-primary">
-          {summary.year}
-        </h2>
-      </button>
-
-      <div className="mt-4 grid grid-cols-4 gap-1.5 sm:gap-2">
-        {summary.monthCounts.map((count, monthIndex) => {
-          const filled = count > 0
-          const opacity = monthFillOpacity(count, summary.maxMonthCount)
-          const monthKey = monthKeyFromYearMonth(summary.year, monthIndex)
-          const label = `${MONTH_LABELS[monthIndex]} ${summary.year}`
-
-          if (!filled) {
-            return (
-              <button
-                key={monthKey}
-                type="button"
-                onClick={() => onSelectYear(summary.year)}
-                className="aspect-square rounded-sm bg-[#2a2c33] focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                title={`${label}: 0 frames`}
-                aria-label={`View ${summary.year} by month`}
-              />
-            )
-          }
-
-          return (
+        return (
+          <article
+            key={summary.year}
+            className="group relative aspect-4/5 overflow-hidden rounded-xl border border-border bg-surface hover:border-accent/80 hover:scale-103 hover:shadow-2xl transition-all duration-300"
+          >
             <button
-              key={monthKey}
               type="button"
-              title={`${label}: ${count} ${count === 1 ? 'frame' : 'frames'}`}
-              aria-label={`View ${label}, ${count} frames`}
-              onClick={() => onSelectMonth(monthKey)}
-              className="aspect-square rounded-sm bg-accent transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-              style={{ opacity }}
-            />
-          )
-        })}
-      </div>
+              onClick={() => onSelectYear(summary.year)}
+              className="absolute inset-0 z-0 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-inset"
+              aria-label={`View photos from ${summary.year}`}
+            >
+              {coverUrl ? (
+                <img
+                  src={coverUrl}
+                  alt=""
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-[#2a2c33]" />
+              )}
 
-      <button
-        type="button"
-        onClick={() => onSelectYear(summary.year)}
-        className="mt-4 w-full text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-      >
-        <p className="font-mono-label text-[10px] tracking-wide text-text-muted">
-          {frameLabel}
-        </p>
-      </button>
-    </article>
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/85 via-black/50 to-transparent px-4 pb-4 pt-16">
+                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+                  {summary.year}
+                </h2>
+              </div>
+            </button>
+
+            <span className="pointer-events-none absolute right-3 top-3 z-10 rounded-full bg-accent px-2.5 py-1 font-mono-label text-[10px] font-medium tracking-wide text-background">
+              {frameLabel}
+            </span>
+
+            {isAdmin && onEditCover && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEditCover(summary.year)
+                }}
+                aria-label={`Edit ${summary.year} cover`}
+                title="Edit cover"
+                className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 text-text-muted opacity-0 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+              >
+                <ImagePlus size={15} strokeWidth={1.75} />
+              </button>
+            )}
+          </article>
+        )
+      })}
+    </div>
   )
 }

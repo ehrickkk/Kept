@@ -6,30 +6,44 @@ import { MonthSection } from '../components/MonthSection'
 import { MonthStackSection } from '../components/MonthStackSection'
 import { UploadModal } from '../components/UploadModal'
 import { ViewModeToggle, type ViewMode } from '../components/ViewModeToggle'
+import { YearCoverModal } from '../components/YearCoverModal'
+import { YearFeedSection } from '../components/YearFeedSection'
 import { YearOverviewSection } from '../components/YearOverviewSection'
 import { useAuth } from '../hooks/useAuth'
 import { deletePhoto, fetchPhotos } from '../lib/photos'
-import { groupPhotosByMonth, groupPhotosByYear } from '../lib/utils'
-import type { PhotoEntry } from '../types'
+import {
+  groupPhotosByMonth,
+  groupPhotosByYear,
+  photosForYear,
+} from '../lib/utils'
+import { fetchYearCovers } from '../lib/yearCovers'
+import type { PhotoEntry, YearCover } from '../types'
 
 export function ScrapbookPage() {
   const { session } = useAuth()
   const isAdmin = !!session
 
   const [photos, setPhotos] = useState<PhotoEntry[]>([])
+  const [yearCovers, setYearCovers] = useState<YearCover[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('moment')
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [scrollToMonthKey, setScrollToMonthKey] = useState<string | null>(null)
+  const [coverEditYear, setCoverEditYear] = useState<string | null>(null)
 
   const loadPhotos = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await fetchPhotos()
-      setPhotos(data)
+      const [photoData, coverData] = await Promise.all([
+        fetchPhotos(),
+        fetchYearCovers().catch(() => [] as YearCover[]),
+      ])
+      setPhotos(photoData)
+      setYearCovers(coverData)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load photos'
       setError(message)
@@ -48,6 +62,30 @@ export function ScrapbookPage() {
   }, [photos])
 
   const yearSummaries = useMemo(() => groupPhotosByYear(photos), [photos])
+
+  const coverByYear = useMemo(() => {
+    const map = new Map<number, string>()
+    for (const cover of yearCovers) {
+      map.set(cover.year, cover.image_url)
+    }
+    return map
+  }, [yearCovers])
+
+  const selectedYearPhotos = useMemo(
+    () => (selectedYear ? photosForYear(photos, selectedYear) : []),
+    [photos, selectedYear],
+  )
+
+  const editingCover = useMemo(() => {
+    if (!coverEditYear) return null
+    const yearNum = Number(coverEditYear)
+    const custom = yearCovers.find((cover) => cover.year === yearNum) ?? null
+    return {
+      year: coverEditYear,
+      customUrl: custom?.image_url ?? null,
+      hasCustomCover: !!custom,
+    }
+  }, [coverEditYear, yearCovers])
 
   useEffect(() => {
     if (viewMode !== 'month' || !scrollToMonthKey) return
@@ -81,19 +119,29 @@ export function ScrapbookPage() {
     }
   }
 
-  const openMonthViewAt = (monthKey: string) => {
-    setScrollToMonthKey(monthKey)
-    setViewMode('month')
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (mode === 'year' && selectedYear !== null) {
+      setSelectedYear(null)
+      setViewMode('year')
+      return
+    }
+    setSelectedYear(null)
+    setViewMode(mode)
   }
 
   const handleSelectYear = (year: string) => {
-    const firstMonth = monthGroups.find(([key]) => key.startsWith(`${year}-`))
-    if (firstMonth) openMonthViewAt(firstMonth[0])
-    else setViewMode('month')
+    setSelectedYear(year)
+    setViewMode('year')
   }
 
-  const handleSelectMonth = (monthKey: string) => {
-    openMonthViewAt(monthKey)
+  const handleCoverSaved = (cover: YearCover | null) => {
+    if (!coverEditYear) return
+    const yearNum = Number(coverEditYear)
+
+    setYearCovers((prev) => {
+      const without = prev.filter((entry) => entry.year !== yearNum)
+      return cover ? [...without, cover].sort((a, b) => b.year - a.year) : without
+    })
   }
 
   return (
@@ -105,10 +153,10 @@ export function ScrapbookPage() {
         <p className="mt-2 font-mono-label text-xs uppercase tracking-widest text-text-muted">
           Archive of Moments
         </p>
-        <ViewModeToggle mode={viewMode} onChange={setViewMode} />
+        <ViewModeToggle mode={viewMode} onChange={handleViewModeChange} />
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 pb-24">
+      <main className="relative mx-auto max-w-7xl px-4 pb-24">
         {loading && <LoadingSpinner message="Loading frames..." />}
 
         {error && (
@@ -124,11 +172,23 @@ export function ScrapbookPage() {
         )}
 
         {!loading && !error && photos.length > 0 && viewMode === 'year' && (
-          <YearOverviewSection
-            years={yearSummaries}
-            onSelectYear={handleSelectYear}
-            onSelectMonth={handleSelectMonth}
-          />
+          selectedYear ? (
+            <YearFeedSection
+              year={selectedYear}
+              photos={selectedYearPhotos}
+              isAdmin={isAdmin}
+              onDelete={isAdmin ? handleDelete : undefined}
+              deletingId={deletingId}
+            />
+          ) : (
+            <YearOverviewSection
+              years={yearSummaries}
+              coverByYear={coverByYear}
+              isAdmin={isAdmin}
+              onSelectYear={handleSelectYear}
+              onEditCover={isAdmin ? setCoverEditYear : undefined}
+            />
+          )
         )}
 
         {!loading && !error && monthGroups.length > 0 && viewMode === 'moment' && (
@@ -147,7 +207,7 @@ export function ScrapbookPage() {
         )}
 
         {!loading && !error && monthGroups.length > 0 && viewMode === 'month' && (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {monthGroups.map(([monthKey, monthPhotos]) => (
               <MonthStackSection
                 key={monthKey}
@@ -170,6 +230,16 @@ export function ScrapbookPage() {
             onClose={() => setUploadOpen(false)}
             onSuccess={handleUploadSuccess}
           />
+          {editingCover && (
+            <YearCoverModal
+              open={!!coverEditYear}
+              year={editingCover.year}
+              currentCoverUrl={editingCover.customUrl}
+              hasCustomCover={editingCover.hasCustomCover}
+              onClose={() => setCoverEditYear(null)}
+              onSaved={handleCoverSaved}
+            />
+          )}
         </>
       )}
     </div>

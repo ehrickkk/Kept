@@ -6,3 +6,9 @@ export interface PhotoEntry {
   tag?: string
   created_at: string
 }
+
+export interface YearCover {
+  year: number
+  image_url: string
+  updated_at: string
+}

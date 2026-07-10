@@ -40,7 +40,7 @@ export function PhotoCard({
       <button
         type="button"
         onClick={onClick}
-        className="group relative w-full cursor-pointer overflow-hidden rounded-xl border border-border bg-surface text-left transition-colors hover:border-accent/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        className="group relative w-full cursor-pointer overflow-hidden rounded-xl border border-border bg-surface text-left hover:border-accent/60 hover:scale-98 hover:shadow-2xl transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         aria-label={`View photo: ${photo.caption || 'Untitled'}`}
       >
         <img
