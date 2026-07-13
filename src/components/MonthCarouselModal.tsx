@@ -2,8 +2,9 @@ import { AnimatePresence, motion, type PanInfo } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react'
 import type { MouseEvent } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { useScopedSoundtrack } from '../hooks/useSoundtrackPlayer'
 import { formatFrameDate } from '../lib/utils'
-import type { PhotoEntry } from '../types'
+import type { PhotoEntry, Soundtrack } from '../types'
 
 interface MonthCarouselModalProps {
   open: boolean
@@ -13,6 +14,7 @@ interface MonthCarouselModalProps {
   isAdmin?: boolean
   onDelete?: (photo: PhotoEntry) => void
   deletingId?: string | null
+  soundtrack?: Soundtrack | null
 }
 
 const SWIPE_THRESHOLD = 50
@@ -25,9 +27,12 @@ export function MonthCarouselModal({
   isAdmin = false,
   onDelete,
   deletingId = null,
+  soundtrack = null,
 }: MonthCarouselModalProps) {
   const [index, setIndex] = useState(initialIndex)
   const [direction, setDirection] = useState(0)
+
+  useScopedSoundtrack(soundtrack, open)
 
   useEffect(() => {
     if (open) setIndex(initialIndex)

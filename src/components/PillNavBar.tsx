@@ -1,8 +1,9 @@
-import { Home, Info, User } from 'lucide-react'
+import { Home, Info, User, Volume2, VolumeX } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { useSoundtrackPlayer } from '../hooks/useSoundtrackPlayer'
 import { AccountModal } from './AccountModal'
 
 function NavIconLink({
@@ -37,6 +38,7 @@ function NavIconLink({
 
 export function PillNavBar() {
   const { session, signOut } = useAuth()
+  const { muted, setMuted } = useSoundtrackPlayer()
   const navigate = useNavigate()
   const location = useLocation()
   const [accountOpen, setAccountOpen] = useState(false)
@@ -121,7 +123,25 @@ export function PillNavBar() {
               <span className="text-sm font-medium">Account</span>
             </button>
           </div>
-          <span aria-hidden="true" />
+
+          <button
+            type="button"
+            onClick={() => setMuted(!muted)}
+            aria-label={muted ? 'Unmute soundtracks' : 'Mute soundtracks'}
+            aria-pressed={muted}
+            title={muted ? 'Unmute soundtracks' : 'Mute soundtracks'}
+            className={`flex h-10 w-10 items-center justify-center justify-self-end rounded-full transition-colors duration-300 ease-out ${
+              muted
+                ? 'text-text-muted hover:text-text-primary'
+                : 'text-accent hover:text-accent/80'
+            }`}
+          >
+            {muted ? (
+              <VolumeX size={18} strokeWidth={1.75} />
+            ) : (
+              <Volume2 size={18} strokeWidth={1.75} />
+            )}
+          </button>
         </div>
       </nav>
 

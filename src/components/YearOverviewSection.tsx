@@ -1,5 +1,6 @@
-import { ImagePlus } from 'lucide-react'
+import { ImagePlus, Music } from 'lucide-react'
 import type { YearSummary } from '../lib/utils'
+import { soundtrackKey, type Soundtrack } from '../types'
 import { SmartImage } from './SmartImage'
 
 interface YearOverviewSectionProps {
@@ -8,6 +9,8 @@ interface YearOverviewSectionProps {
   isAdmin?: boolean
   onSelectYear: (year: string) => void
   onEditCover?: (year: string) => void
+  soundtrackByKey?: Map<string, Soundtrack>
+  onEditSoundtrack?: (year: string) => void
 }
 
 export function YearOverviewSection({
@@ -16,6 +19,8 @@ export function YearOverviewSection({
   isAdmin = false,
   onSelectYear,
   onEditCover,
+  soundtrackByKey,
+  onEditSoundtrack,
 }: YearOverviewSectionProps) {
   if (years.length === 0) return null
 
@@ -65,9 +70,28 @@ export function YearOverviewSection({
                 }}
                 aria-label={`Edit ${summary.year} cover`}
                 title="Edit cover"
-                className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 text-text-muted opacity-0 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0"
               >
                 <ImagePlus size={15} strokeWidth={1.75} />
+              </button>
+            )}
+
+            {isAdmin && onEditSoundtrack && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEditSoundtrack(summary.year)
+                }}
+                aria-label={`Edit ${summary.year} soundtrack`}
+                title="Edit soundtrack"
+                className={`absolute left-3 top-13 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
+                  soundtrackByKey?.has(soundtrackKey('year', summary.year))
+                    ? 'text-accent'
+                    : 'text-text-muted'
+                }`}
+              >
+                <Music size={15} strokeWidth={1.75} />
               </button>
             )}
           </article>

@@ -154,6 +154,29 @@ body {
   }
 }
 
+.eq-bar {
+  width: 2.5px;
+  height: 5px;
+  border-radius: 1px;
+  background-color: var(--color-accent);
+  animation: eq-bounce 0.9s ease-in-out infinite;
+}
+
+.eq-bar-idle {
+  animation: none;
+  opacity: 0.4;
+}
+
+@keyframes eq-bounce {
+  0%,
+  100% {
+    height: 5px;
+  }
+  50% {
+    height: 15px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .typewriter-cursor {
     animation: none;
@@ -161,6 +184,10 @@ body {
   }
 
   .filmstrip-track {
+    animation: none;
+  }
+
+  .eq-bar {
     animation: none;
   }
 }
