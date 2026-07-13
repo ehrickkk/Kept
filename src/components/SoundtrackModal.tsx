@@ -307,7 +307,7 @@ export function SoundtrackModal({
             role="dialog"
             aria-modal="true"
             aria-label={`Edit ${label} soundtrack`}
-            className="relative z-10 w-full max-w-md rounded-[16px] border border-border bg-surface p-6"
+            className="relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] border border-border bg-surface p-5 sm:p-6"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -318,7 +318,7 @@ export function SoundtrackModal({
               type="button"
               onClick={handleClose}
               disabled={busy}
-              className="absolute right-4 top-4 text-text-muted transition hover:text-text-primary disabled:opacity-50"
+              className="tap-target absolute right-4 top-4 text-text-muted transition hover:text-text-primary disabled:opacity-50"
               aria-label="Close"
             >
               <X size={18} />
@@ -424,7 +424,7 @@ export function SoundtrackModal({
                       onPointerUp={endDrag}
                       onPointerCancel={endDrag}
                       aria-label={`Start time: ${formatTime(rangeStart)}`}
-                      className="absolute top-1/2 z-10 h-7 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-sm border border-background bg-accent transition-transform hover:scale-110 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                      className="tap-target absolute top-1/2 z-10 h-7 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none rounded-sm border border-background bg-accent transition-transform hover:scale-110 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
                       style={{ left: `${startPct}%` }}
                     />
                     <button
@@ -434,7 +434,7 @@ export function SoundtrackModal({
                       onPointerUp={endDrag}
                       onPointerCancel={endDrag}
                       aria-label={`End time: ${formatTime(rangeEnd)}`}
-                      className="absolute top-1/2 z-10 h-7 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-sm border border-background bg-accent transition-transform hover:scale-110 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                      className="tap-target absolute top-1/2 z-10 h-7 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none rounded-sm border border-background bg-accent transition-transform hover:scale-110 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
                       style={{ left: `${endPct}%` }}
                     />
                   </div>
@@ -444,7 +444,7 @@ export function SoundtrackModal({
                       type="button"
                       onClick={togglePreview}
                       disabled={busy}
-                      className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:opacity-50"
+                      className="flex min-h-10 items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:opacity-50"
                     >
                       {previewPlaying ? (
                         <Pause size={12} fill="currentColor" />

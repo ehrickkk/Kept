@@ -55,7 +55,7 @@ export function AccountModal({ open, email, onClose, onLogout }: AccountModalPro
             role="dialog"
             aria-modal="true"
             aria-label="Account"
-            className="glass-panel relative z-10 w-full max-w-md rounded-[16px] p-8"
+            className="glass-panel relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] p-6 sm:p-8"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -65,7 +65,7 @@ export function AccountModal({ open, email, onClose, onLogout }: AccountModalPro
             <button
               type="button"
               onClick={handleClose}
-              className="absolute right-3 top-3 text-text-muted transition hover:text-text-primary"
+              className="tap-target absolute right-3 top-3 text-text-muted transition hover:text-text-primary"
               aria-label="Close"
             >
               <X size={18} />
@@ -91,7 +91,7 @@ export function AccountModal({ open, email, onClose, onLogout }: AccountModalPro
               <button
                 type="button"
                 onClick={() => void handleLogout()}
-                className="mt-12 bg-[#e12b2b] border-0 text-white px-4 py-2 rounded-md hover:bg-[#e12b2b]/80 transition-all duration-200"
+                className="mt-12 flex min-h-10 items-center justify-center bg-[#e12b2b] border-0 text-white px-4 py-2 rounded-md hover:bg-[#e12b2b]/80 transition-all duration-200"
               >
                 Log out
               </button>

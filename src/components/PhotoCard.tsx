@@ -79,7 +79,7 @@ export function PhotoCard({
             onClick={handleDelete}
             disabled={deleting}
             aria-label="Delete photo"
-            className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted opacity-0 transition hover:border-red-500 hover:text-red-400 group-hover:opacity-100 disabled:opacity-50"
+            className="tap-target absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50 sm:opacity-0"
           >
             <Trash2 size={14} />
           </button>

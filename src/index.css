@@ -14,13 +14,35 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
+html {
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
+  overflow-x: clip;
   background-color: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * Expands the effective hit area of small icon buttons to at least 40x40px
+ * without changing their visual size. Never shrinks buttons already >=40px.
+ */
+.tap-target {
+  position: relative;
+}
+
+.tap-target::after {
+  content: "";
+  position: absolute;
+  top: min(calc((100% - 40px) / 2), 0px);
+  bottom: min(calc((100% - 40px) / 2), 0px);
+  left: min(calc((100% - 40px) / 2), 0px);
+  right: min(calc((100% - 40px) / 2), 0px);
 }
 
 .font-display {

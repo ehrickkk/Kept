@@ -26,7 +26,7 @@ export function ViewModeToggle({ mode, onChange }: ViewModeToggleProps) {
           <button
             type="button"
             onClick={() => onChange(option.mode)}
-            className={`text-sm transition-colors ${
+            className={`flex min-h-10 items-center text-sm transition-colors ${
               mode === option.mode
                 ? 'font-medium text-accent'
                 : 'text-text-muted hover:text-text-primary'

@@ -31,7 +31,7 @@ function NavIconLink({
       }
     >
       {icon}
-      <span className="text-sm font-medium">{label}</span>
+      <span className="hidden text-sm font-medium sm:inline">{label}</span>
     </NavLink>
   )
 }
@@ -63,7 +63,7 @@ export function PillNavBar() {
     <>
       <nav
         aria-label="Main navigation"
-        className="fixed left-1/2 top-3 z-40 w-full max-w-5xl -translate-x-1/2 sm:top-4"
+        className="fixed left-1/2 z-40 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 top-[max(0.75rem,env(safe-area-inset-top))] sm:top-[max(1rem,env(safe-area-inset-top))] sm:w-[calc(100%-2rem)]"
       >
         <div className="glass-panel grid grid-cols-[1fr_auto_1fr] items-center rounded-full px-3 py-1 sm:px-5">
           {/* Logo section */}
@@ -120,7 +120,7 @@ export function PillNavBar() {
               }`}
             >
               <User size={18} strokeWidth={1.75} />
-              <span className="text-sm font-medium">Account</span>
+              <span className="hidden text-sm font-medium sm:inline">Account</span>
             </button>
           </div>
 

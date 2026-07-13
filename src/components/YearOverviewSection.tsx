@@ -70,7 +70,7 @@ export function YearOverviewSection({
                 }}
                 aria-label={`Edit ${summary.year} cover`}
                 title="Edit cover"
-                className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0"
+                className="tap-target absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0"
               >
                 <ImagePlus size={15} strokeWidth={1.75} />
               </button>
@@ -85,7 +85,7 @@ export function YearOverviewSection({
                 }}
                 aria-label={`Edit ${summary.year} soundtrack`}
                 title="Edit soundtrack"
-                className={`absolute left-3 top-13 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
+                className={`tap-target absolute left-3 top-13 z-10 flex h-8 w-8 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
                   soundtrackByKey?.has(soundtrackKey('year', summary.year))
                     ? 'text-accent'
                     : 'text-text-muted'

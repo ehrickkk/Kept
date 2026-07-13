@@ -264,7 +264,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Upload photos"
-            className="relative z-10 max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[16px] border border-border bg-surface p-6"
+            className="relative z-10 max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-[16px] border border-border bg-surface p-5 sm:p-6"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -275,7 +275,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
               type="button"
               onClick={handleClose}
               disabled={uploading}
-              className="absolute right-4 top-4 text-text-muted transition hover:text-text-primary disabled:opacity-50"
+              className="tap-target absolute right-4 top-4 text-text-muted transition hover:text-text-primary disabled:opacity-50"
               aria-label="Close"
             >
               <X size={18} />
@@ -379,7 +379,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
                               e.stopPropagation()
                               removeItem(item.id)
                             }}
-                            className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400"
+                            className="tap-target absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400"
                             aria-label={`Remove ${item.file.name}`}
                           >
                             <X size={12} />

@@ -116,7 +116,7 @@ export function LandingPage() {
 
           <Link
             to="/home"
-            className="mt-10 inline-block rounded border border-accent px-6 py-2.5 font-mono-label text-[11px] uppercase tracking-[0.14em] text-accent transition-colors hover:bg-accent/10 sm:mt-12 sm:px-8 sm:py-3 sm:text-xs"
+            className="mt-10 inline-flex min-h-10 items-center justify-center rounded border border-accent px-6 py-2.5 font-mono-label text-[11px] uppercase tracking-[0.14em] text-accent transition-colors hover:bg-accent/10 sm:mt-12 sm:px-8 sm:py-3 sm:text-xs"
           >
             Enter the archive
           </Link>
@@ -124,7 +124,7 @@ export function LandingPage() {
 
         <FilmstripPreview photos={recentPhotos} active={filmstripOn} />
 
-        <footer className="px-6 pb-8 pt-2 text-center font-mono-label text-[10px] uppercase tracking-[0.14em] text-text-muted sm:pb-10 sm:text-[11px]">
+        <footer className="px-6 pt-2 text-center font-mono-label text-[10px] uppercase tracking-[0.14em] text-text-muted pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:text-[11px]">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
             <LandingMetadataStat
               label="FRAMES KEPT"

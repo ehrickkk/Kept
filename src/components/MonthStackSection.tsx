@@ -97,7 +97,7 @@ export function MonthStackSection({
                     }}
                     aria-label={`Edit ${formatMonthHeader(monthKey)} soundtrack`}
                     title="Edit soundtrack"
-                    className={`absolute left-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
+                    className={`tap-target absolute left-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
                       soundtrack ? 'text-accent' : 'text-text-muted'
                     }`}
                   >
