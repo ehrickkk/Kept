@@ -69,7 +69,7 @@ export function PhotoModal({ photo, photos, onClose, onNavigate }: PhotoModalPro
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex max-h-[85dvh] flex-col overflow-hidden rounded border border-border bg-surface">
+            <div className="relative flex max-h-[90dvh] flex-col overflow-hidden rounded border border-border bg-surface">
               <button
                 type="button"
                 onClick={onClose}

@@ -55,7 +55,7 @@ export function AccountModal({ open, email, onClose, onLogout }: AccountModalPro
             role="dialog"
             aria-modal="true"
             aria-label="Account"
-            className="glass-panel relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] p-6 sm:p-8"
+            className="glass-panel relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] p-8"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}

@@ -147,7 +147,7 @@ export function YearCoverModal({
             role="dialog"
             aria-modal="true"
             aria-label={`Edit ${year} cover`}
-            className="relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] border border-border bg-surface p-5 sm:p-6"
+            className="relative z-10 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[16px] border border-border bg-surface p-6"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -164,7 +164,7 @@ export function YearCoverModal({
               <X size={18} />
             </button>
 
-            <h2 className="font-display mb-1 text-xl font-semibold text-text-primary">
+            <h2 className="font-display mb-1 pr-10 text-xl font-semibold text-text-primary">
               Edit cover
             </h2>
             <p className="mb-5 font-mono-label text-[10px] uppercase tracking-wide text-text-muted">

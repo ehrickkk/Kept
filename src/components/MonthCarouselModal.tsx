@@ -120,26 +120,27 @@ export function MonthCarouselModal({
             className="relative z-10 flex w-full max-w-lg flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={onClose}
-              className="tap-target absolute -right-1 -top-1 z-20 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:text-text-primary md:-right-2 md:-top-2"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-
             <div className="flex w-full max-h-[90dvh] items-center gap-2 md:gap-3">
               <button
                 type="button"
                 onClick={goPrev}
-                className="tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
+                className="relative tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
                 aria-label="Previous photo"
               >
                 <ChevronLeft size={20} />
               </button>
 
-              <div className="min-w-0 flex-1 overflow-hidden">
+              <div className="relative min-w-0 flex-1 overflow-visible">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="tap-target absolute right-0 top-3 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:text-text-primary"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="overflow-hidden pt-3">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
                     key={photo.id}
@@ -193,12 +194,13 @@ export function MonthCarouselModal({
                     </div>
                   </motion.div>
                 </AnimatePresence>
+                </div>
               </div>
 
               <button
                 type="button"
                 onClick={goNext}
-                className="tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
+                className="relative tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
                 aria-label="Next photo"
               >
                 <ChevronRight size={20} />

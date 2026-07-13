@@ -264,7 +264,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Upload photos"
-            className="relative z-10 max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-[16px] border border-border bg-surface p-5 sm:p-6"
+            className="relative z-10 max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-[16px] border border-border bg-surface p-6"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
@@ -281,7 +281,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
               <X size={18} />
             </button>
 
-            <h2 className="font-display mb-5 text-xl font-semibold text-text-primary">
+            <h2 className="font-display mb-5 pr-10 text-xl font-semibold text-text-primary">
               Upload
             </h2>
 
