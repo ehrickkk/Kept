@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { formatFrameDate, formatMonthHeader, sortByCreatedAtDesc } from '../lib/utils'
 import type { PhotoEntry } from '../types'
 import { MonthCarouselModal } from './MonthCarouselModal'
+import { SmartImage } from './SmartImage'
 
 interface MonthStackSectionProps {
   monthKey: string
@@ -68,12 +69,12 @@ export function MonthStackSection({
               style={{ zIndex: 10 }}
             >
               <div className="relative aspect-4/5 overflow-hidden bg-background">
-                <img
+                <SmartImage
                   src={coverPhoto.image_url}
                   alt={coverPhoto.caption || 'Photo'}
-                  loading="lazy"
-                  className="h-full w-full object-cover rounded-md"
-                  />
+                  fill
+                  className="rounded-md"
+                />
                 {showStack && (
                   <span className="absolute bottom-2 right-2 rounded border border-border bg-surface/90 px-2 py-0.5 font-mono-label text-[10px] tracking-wide text-text-muted">
                     {photos.length} photos

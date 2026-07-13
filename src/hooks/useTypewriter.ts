@@ -11,12 +11,15 @@ export function useTypewriter(
     typeMs?: number
     deleteMs?: number
     pauseMs?: number
+    /** When false, the animation holds at an empty string until enabled */
+    enabled?: boolean
   },
 ): string {
   const prefersReducedMotion = usePrefersReducedMotion()
   const typeMs = options?.typeMs ?? DEFAULT_TYPE_MS
   const deleteMs = options?.deleteMs ?? DEFAULT_DELETE_MS
   const pauseMs = options?.pauseMs ?? DEFAULT_PAUSE_MS
+  const enabled = options?.enabled ?? true
 
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
@@ -25,7 +28,7 @@ export function useTypewriter(
   const currentPhrase = phrases[phraseIndex] ?? ''
 
   useEffect(() => {
-    if (prefersReducedMotion || phrases.length === 0) return
+    if (!enabled || prefersReducedMotion || phrases.length === 0) return
 
     const isComplete = !isDeleting && charIndex === currentPhrase.length
     const isEmpty = isDeleting && charIndex === 0
@@ -54,6 +57,7 @@ export function useTypewriter(
     charIndex,
     currentPhrase.length,
     deleteMs,
+    enabled,
     isDeleting,
     pauseMs,
     phrases.length,
@@ -64,6 +68,8 @@ export function useTypewriter(
   if (prefersReducedMotion || phrases.length === 0) {
     return phrases[0] ?? ''
   }
+
+  if (!enabled) return ''
 
   return currentPhrase.slice(0, charIndex)
 }

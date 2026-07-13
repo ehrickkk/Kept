@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { Trash2 } from 'lucide-react'
-import type { MouseEvent } from 'react'
+import { type MouseEvent, useRef, useState } from 'react'
 import { formatFrameDate } from '../lib/utils'
 import type { PhotoEntry } from '../types'
+import { SmartImage } from './SmartImage'
 
 interface PhotoCardProps {
   photo: PhotoEntry
@@ -24,17 +25,23 @@ export function PhotoCard({
   deleting = false,
   isHero = false,
 }: PhotoCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(containerRef, { once: true, margin: '-40px' })
+  const [imageLoaded, setImageLoaded] = useState(false)
+
   const handleDelete = (e: MouseEvent) => {
     e.stopPropagation()
     onDelete?.(photo)
   }
 
+  const revealed = inView && imageLoaded
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.24), ease: 'easeOut' }}
+      ref={containerRef}
+      initial={false}
+      animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+      transition={{ duration: 0.35, delay: revealed ? Math.min(index * 0.04, 0.24) : 0, ease: 'easeOut' }}
       className={`mb-2 break-inside-avoid ${isHero ? 'column-span-all' : ''}`}
     >
       <button
@@ -43,11 +50,12 @@ export function PhotoCard({
         className="group relative w-full cursor-pointer overflow-hidden rounded-xl border border-border bg-surface text-left hover:border-accent/60 hover:scale-98 hover:shadow-2xl transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         aria-label={`View photo: ${photo.caption || 'Untitled'}`}
       >
-        <img
+        <SmartImage
           src={photo.image_url}
           alt={photo.caption || 'Photo'}
-          loading="lazy"
-          className="block h-auto w-full"
+          naturalRatio
+          containerClassName="w-full"
+          onLoaded={() => setImageLoaded(true)}
         />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/45 to-transparent px-3 pb-3 pt-10">

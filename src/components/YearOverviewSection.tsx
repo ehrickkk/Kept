@@ -1,5 +1,6 @@
 import { ImagePlus } from 'lucide-react'
 import type { YearSummary } from '../lib/utils'
+import { SmartImage } from './SmartImage'
 
 interface YearOverviewSectionProps {
   years: YearSummary[]
@@ -39,12 +40,7 @@ export function YearOverviewSection({
               aria-label={`View photos from ${summary.year}`}
             >
               {coverUrl ? (
-                <img
-                  src={coverUrl}
-                  alt=""
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                <SmartImage src={coverUrl} alt="" fill />
               ) : (
                 <div className="absolute inset-0 bg-[#2a2c33]" />
               )}
