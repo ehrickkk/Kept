@@ -124,7 +124,7 @@ export function LandingPage() {
 
         <FilmstripPreview photos={recentPhotos} active={filmstripOn} />
 
-        <footer className="px-6 pt-2 text-center font-mono-label text-[10px] uppercase tracking-[0.14em] text-text-muted pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:text-[11px]">
+        <footer className="px-6 pt-2 text-center font-mono-label text-[10px] uppercase tracking-[0.14em] text-text-muted pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:text-[11px] lg:pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
             <LandingMetadataStat
               label="FRAMES KEPT"

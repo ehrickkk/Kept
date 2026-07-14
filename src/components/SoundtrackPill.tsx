@@ -17,7 +17,7 @@ export function SoundtrackPill() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="pointer-events-none fixed inset-x-0 z-60 flex justify-center px-4 bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"
+          className="pointer-events-none fixed inset-x-0 z-60 flex justify-center px-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] lg:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"
         >
           <button
             type="button"
