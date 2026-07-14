@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
+import { Music } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { formatFrameDate, formatMonthHeader, sortByCreatedAtDesc } from '../lib/utils'
-import type { PhotoEntry } from '../types'
+import type { PhotoEntry, Soundtrack } from '../types'
 import { MonthCarouselModal } from './MonthCarouselModal'
+import { SmartImage } from './SmartImage'
 
 interface MonthStackSectionProps {
   monthKey: string
@@ -10,6 +12,8 @@ interface MonthStackSectionProps {
   isAdmin?: boolean
   onDelete?: (photo: PhotoEntry) => void
   deletingId?: string | null
+  soundtrack?: Soundtrack | null
+  onEditSoundtrack?: (monthKey: string) => void
 }
 
 const PEEK_LAYERS = [
@@ -24,6 +28,8 @@ export function MonthStackSection({
   isAdmin = false,
   onDelete,
   deletingId = null,
+  soundtrack = null,
+  onEditSoundtrack,
 }: MonthStackSectionProps) {
   const [carouselOpen, setCarouselOpen] = useState(false)
 
@@ -33,7 +39,7 @@ export function MonthStackSection({
   const peekCount = Math.min(photos.length - 1, 3)
 
   return (
-    <section className="mb-16">
+    <section id={`month-${monthKey}`} className="mb-16 scroll-mt-24">
       <h2 className="font-display mb-8 text-center text-2xl font-semibold tracking-tight text-text-primary md:text-3xl">
         {formatMonthHeader(monthKey)}
       </h2>
@@ -68,12 +74,36 @@ export function MonthStackSection({
               style={{ zIndex: 10 }}
             >
               <div className="relative aspect-4/5 overflow-hidden bg-background">
-                <img
+                <SmartImage
                   src={coverPhoto.image_url}
                   alt={coverPhoto.caption || 'Photo'}
-                  loading="lazy"
-                  className="h-full w-full object-cover rounded-md"
-                  />
+                  fill
+                  className="rounded-md"
+                />
+                {isAdmin && onEditSoundtrack && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onEditSoundtrack(monthKey)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onEditSoundtrack(monthKey)
+                      }
+                    }}
+                    aria-label={`Edit ${formatMonthHeader(monthKey)} soundtrack`}
+                    title="Edit soundtrack"
+                    className={`tap-target absolute left-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 transition hover:border-accent hover:text-accent group-hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent sm:opacity-0 ${
+                      soundtrack ? 'text-accent' : 'text-text-muted'
+                    }`}
+                  >
+                    <Music size={14} strokeWidth={1.75} />
+                  </span>
+                )}
                 {showStack && (
                   <span className="absolute bottom-2 right-2 rounded border border-border bg-surface/90 px-2 py-0.5 font-mono-label text-[10px] tracking-wide text-text-muted">
                     {photos.length} photos
@@ -103,6 +133,7 @@ export function MonthStackSection({
         isAdmin={isAdmin}
         onDelete={onDelete}
         deletingId={deletingId}
+        soundtrack={soundtrack}
       />
     </section>
   )

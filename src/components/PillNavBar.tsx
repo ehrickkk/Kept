@@ -1,8 +1,9 @@
-import { Home, Info, User } from 'lucide-react'
+import { Home, Info, User, Volume2, VolumeX } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { useSoundtrackPlayer } from '../hooks/useSoundtrackPlayer'
 import { AccountModal } from './AccountModal'
 
 function NavIconLink({
@@ -30,13 +31,14 @@ function NavIconLink({
       }
     >
       {icon}
-      <span className="text-sm font-medium">{label}</span>
+      <span className="hidden text-sm font-medium sm:inline">{label}</span>
     </NavLink>
   )
 }
 
 export function PillNavBar() {
   const { session, signOut } = useAuth()
+  const { muted, setMuted } = useSoundtrackPlayer()
   const navigate = useNavigate()
   const location = useLocation()
   const [accountOpen, setAccountOpen] = useState(false)
@@ -61,7 +63,7 @@ export function PillNavBar() {
     <>
       <nav
         aria-label="Main navigation"
-        className="fixed left-1/2 top-3 z-40 w-full max-w-5xl -translate-x-1/2 sm:top-4"
+        className="fixed left-1/2 z-40 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 top-[max(0.75rem,env(safe-area-inset-top))] sm:top-[max(1rem,env(safe-area-inset-top))] sm:w-[calc(100%-2rem)]"
       >
         <div className="glass-panel grid grid-cols-[1fr_auto_1fr] items-center rounded-full px-3 py-1 sm:px-5">
           {/* Logo section */}
@@ -118,10 +120,28 @@ export function PillNavBar() {
               }`}
             >
               <User size={18} strokeWidth={1.75} />
-              <span className="text-sm font-medium">Account</span>
+              <span className="hidden text-sm font-medium sm:inline">Account</span>
             </button>
           </div>
-          <span aria-hidden="true" />
+
+          <button
+            type="button"
+            onClick={() => setMuted(!muted)}
+            aria-label={muted ? 'Unmute soundtracks' : 'Mute soundtracks'}
+            aria-pressed={muted}
+            title={muted ? 'Unmute soundtracks' : 'Mute soundtracks'}
+            className={`flex h-10 w-10 items-center justify-center justify-self-end rounded-full transition-colors duration-300 ease-out ${
+              muted
+                ? 'text-text-muted hover:text-text-primary'
+                : 'text-accent hover:text-accent/80'
+            }`}
+          >
+            {muted ? (
+              <VolumeX size={18} strokeWidth={1.75} />
+            ) : (
+              <Volume2 size={18} strokeWidth={1.75} />
+            )}
+          </button>
         </div>
       </nav>
 

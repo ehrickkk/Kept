@@ -69,11 +69,11 @@ export function PhotoModal({ photo, photos, onClose, onNavigate }: PhotoModalPro
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex max-h-[90vh] flex-col overflow-hidden rounded border border-border bg-surface">
+            <div className="relative flex max-h-[90dvh] flex-col overflow-hidden rounded border border-border bg-surface">
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-text-muted transition hover:text-text-primary"
+                className="tap-target absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-text-muted transition hover:text-text-primary"
                 aria-label="Close"
               >
                 <X size={16} />
@@ -84,7 +84,7 @@ export function PhotoModal({ photo, photos, onClose, onNavigate }: PhotoModalPro
                   <img
                     src={photo.image_url}
                     alt={photo.caption || 'Photo'}
-                    className="max-h-[60vh] max-w-full object-contain"
+                    className="max-h-[60dvh] max-w-full object-contain"
                   />
                 </div>
 
@@ -112,7 +112,7 @@ export function PhotoModal({ photo, photos, onClose, onNavigate }: PhotoModalPro
                   type="button"
                   onClick={goPrev}
                   disabled={!hasPrev}
-                  className="rounded border border-border bg-surface px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex min-h-10 items-center rounded border border-border bg-surface px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   ← Prev
                 </button>
@@ -123,7 +123,7 @@ export function PhotoModal({ photo, photos, onClose, onNavigate }: PhotoModalPro
                   type="button"
                   onClick={goNext}
                   disabled={!hasNext}
-                  className="rounded border border-border bg-surface px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex min-h-10 items-center rounded border border-border bg-surface px-3 py-1.5 text-xs text-text-muted transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   Next →
                 </button>

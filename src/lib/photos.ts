@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type { PhotoEntry } from '../types'
 
-const BUCKET = 'photos'
+export const PHOTOS_BUCKET = 'photos'
 
 export async function fetchPhotos(): Promise<PhotoEntry[]> {
   const { data, error } = await supabase
@@ -23,12 +23,12 @@ export async function uploadPhoto(
   const filePath = `${Date.now()}-${crypto.randomUUID()}.${ext}`
 
   const { error: uploadError } = await supabase.storage
-    .from(BUCKET)
+    .from(PHOTOS_BUCKET)
     .upload(filePath, file)
 
   if (uploadError) throw uploadError
 
-  const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(filePath)
+  const { data: urlData } = supabase.storage.from(PHOTOS_BUCKET).getPublicUrl(filePath)
 
   const { data, error: insertError } = await supabase
     .from('photos')
@@ -46,17 +46,18 @@ export async function uploadPhoto(
 }
 
 export function extractStoragePath(imageUrl: string): string | null {
-  const marker = `/storage/v1/object/public/${BUCKET}/`
-  const index = imageUrl.indexOf(marker)
+  const marker = `/storage/v1/object/public/${PHOTOS_BUCKET}/`
+  const withoutQuery = imageUrl.split('?')[0] ?? imageUrl
+  const index = withoutQuery.indexOf(marker)
   if (index === -1) return null
-  return imageUrl.slice(index + marker.length)
+  return withoutQuery.slice(index + marker.length)
 }
 
 export async function deletePhoto(photo: PhotoEntry): Promise<void> {
   const filePath = extractStoragePath(photo.image_url)
   if (filePath) {
     const { error: storageError } = await supabase.storage
-      .from(BUCKET)
+      .from(PHOTOS_BUCKET)
       .remove([filePath])
     if (storageError) throw storageError
   }

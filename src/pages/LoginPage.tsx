@@ -44,9 +44,9 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-16">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 pb-8 pt-20 sm:pt-16">
       <div className="relative w-full max-w-sm">
-        <div className="rounded border border-border bg-surface p-8">
+        <div className="rounded border border-border bg-surface p-6 sm:p-8">
           <h1 className="font-display mb-6 text-center text-2xl font-semibold text-text-primary">
             Sign in
           </h1>
@@ -87,7 +87,7 @@ export function LoginPage() {
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-accent"
+                  className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-text-muted transition-colors hover:text-accent"
                 >
                   {showPassword ? (
                     <EyeOff size={18} strokeWidth={1.75} />

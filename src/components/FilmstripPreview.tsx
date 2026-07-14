@@ -1,20 +1,36 @@
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { formatFrameDate } from '../lib/utils'
 import type { PhotoEntry } from '../types'
+import { SmartImage } from './SmartImage'
 
 interface FilmstripPreviewProps {
   photos: PhotoEntry[]
+  /** Allows the parent to hold the marquee until the page sequence reaches it */
+  active?: boolean
 }
 
 const FILMSTRIP_COUNT = 6
 
-export function FilmstripPreview({ photos }: FilmstripPreviewProps) {
+export function FilmstripPreview({ photos, active = true }: FilmstripPreviewProps) {
   const navigate = useNavigate()
+  const [loadedIds, setLoadedIds] = useState<ReadonlySet<string>>(new Set())
+
+  const markLoaded = useCallback((id: string) => {
+    setLoadedIds((prev) => {
+      if (prev.has(id)) return prev
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+  }, [])
 
   if (photos.length === 0) return null
 
   const frames = photos.slice(0, FILMSTRIP_COUNT)
   const loopFrames = [...frames, ...frames]
+  const allLoaded = frames.every((photo) => loadedIds.has(photo.id))
+  const scrolling = active && allLoaded
 
   const handleNavigate = () => {
     navigate('/home')
@@ -25,7 +41,11 @@ export function FilmstripPreview({ photos }: FilmstripPreviewProps) {
       className="filmstrip-mask w-full overflow-hidden py-10 sm:py-14"
       aria-label="Recent photo preview"
     >
-      <div className="filmstrip-track flex w-max gap-3 px-4 sm:gap-4 sm:px-6">
+      <div
+        className={`flex w-max gap-3 px-4 sm:gap-4 sm:px-6 ${
+          scrolling ? 'filmstrip-track' : ''
+        }`}
+      >
         {loopFrames.map((photo, index) => (
           <button
             key={`${photo.id}-${index}`}
@@ -35,15 +55,14 @@ export function FilmstripPreview({ photos }: FilmstripPreviewProps) {
             aria-label={`View archive — ${formatFrameDate(photo.date)}`}
           >
             <div className="w-24 rounded border border-border bg-surface p-1 transition-colors group-hover:border-accent/60 sm:w-32 md:w-36">
-              <div className="aspect-4/5 overflow-hidden bg-background">
-                <img
-                  src={photo.image_url}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              <SmartImage
+                src={photo.image_url}
+                alt=""
+                aspectRatio="4 / 5"
+                eager
+                containerClassName="bg-background"
+                onLoaded={() => markLoaded(photo.id)}
+              />
             </div>
             <p className="mt-1.5 text-center font-mono-label text-[9px] tracking-wide text-text-muted sm:text-[10px]">
               {formatFrameDate(photo.date)}

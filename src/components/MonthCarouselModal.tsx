@@ -2,8 +2,9 @@ import { AnimatePresence, motion, type PanInfo } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react'
 import type { MouseEvent } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { useScopedSoundtrack } from '../hooks/useSoundtrackPlayer'
 import { formatFrameDate } from '../lib/utils'
-import type { PhotoEntry } from '../types'
+import type { PhotoEntry, Soundtrack } from '../types'
 
 interface MonthCarouselModalProps {
   open: boolean
@@ -13,6 +14,7 @@ interface MonthCarouselModalProps {
   isAdmin?: boolean
   onDelete?: (photo: PhotoEntry) => void
   deletingId?: string | null
+  soundtrack?: Soundtrack | null
 }
 
 const SWIPE_THRESHOLD = 50
@@ -25,9 +27,12 @@ export function MonthCarouselModal({
   isAdmin = false,
   onDelete,
   deletingId = null,
+  soundtrack = null,
 }: MonthCarouselModalProps) {
   const [index, setIndex] = useState(initialIndex)
   const [direction, setDirection] = useState(0)
+
+  useScopedSoundtrack(soundtrack, open)
 
   useEffect(() => {
     if (open) setIndex(initialIndex)
@@ -115,26 +120,27 @@ export function MonthCarouselModal({
             className="relative z-10 flex w-full max-w-lg flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute -right-1 -top-1 z-20 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:text-text-primary md:-right-2 md:-top-2"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="flex w-full max-h-[90vh] items-center gap-2 md:gap-3">
+            <div className="flex w-full max-h-[90dvh] items-center gap-2 md:gap-3">
               <button
                 type="button"
                 onClick={goPrev}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
+                className="relative tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
                 aria-label="Previous photo"
               >
                 <ChevronLeft size={20} />
               </button>
 
-              <div className="min-w-0 flex-1 overflow-hidden">
+              <div className="relative min-w-0 flex-1 overflow-visible">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="tap-target absolute right-0 top-3 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:text-text-primary"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="overflow-hidden pt-3">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
                     key={photo.id}
@@ -155,7 +161,7 @@ export function MonthCarouselModal({
                         <img
                           src={photo.image_url}
                           alt={photo.caption || 'Photo'}
-                          className="max-h-[50vh] w-full object-contain sm:max-h-[65vh]"
+                          className="max-h-[50dvh] w-full object-contain sm:max-h-[65dvh]"
                           draggable={false}
                         />
                         {isAdmin && onDelete && (
@@ -164,7 +170,7 @@ export function MonthCarouselModal({
                             onClick={(e) => handleDelete(e, photo)}
                             disabled={deletingId === photo.id}
                             aria-label="Delete photo"
-                            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+                            className="tap-target absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded border border-border bg-surface/90 text-text-muted transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -188,12 +194,13 @@ export function MonthCarouselModal({
                     </div>
                   </motion.div>
                 </AnimatePresence>
+                </div>
               </div>
 
               <button
                 type="button"
                 onClick={goNext}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
+                className="relative tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border bg-surface text-text-muted transition hover:border-accent hover:text-accent"
                 aria-label="Next photo"
               >
                 <ChevronRight size={20} />

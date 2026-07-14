@@ -4,30 +4,66 @@ import { ErrorMessage } from '../components/ErrorMessage'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { MonthSection } from '../components/MonthSection'
 import { MonthStackSection } from '../components/MonthStackSection'
+import { SoundtrackModal } from '../components/SoundtrackModal'
 import { UploadModal } from '../components/UploadModal'
 import { ViewModeToggle, type ViewMode } from '../components/ViewModeToggle'
+import { YearCoverModal } from '../components/YearCoverModal'
+import { YearFeedSection } from '../components/YearFeedSection'
+import { YearOverviewSection } from '../components/YearOverviewSection'
 import { useAuth } from '../hooks/useAuth'
+import { useScopedSoundtrack } from '../hooks/useSoundtrackPlayer'
 import { deletePhoto, fetchPhotos } from '../lib/photos'
-import { groupPhotosByMonth } from '../lib/utils'
-import type { PhotoEntry } from '../types'
+import { fetchSoundtracks } from '../lib/soundtracks'
+import {
+  formatMonthHeader,
+  groupPhotosByMonth,
+  groupPhotosByYear,
+  photosForYear,
+} from '../lib/utils'
+import { fetchYearCovers } from '../lib/yearCovers'
+import {
+  soundtrackKey,
+  type PhotoEntry,
+  type Soundtrack,
+  type SoundtrackScope,
+  type YearCover,
+} from '../types'
+
+interface SoundtrackEditTarget {
+  scope: SoundtrackScope
+  scopeKey: string
+  label: string
+}
 
 export function ScrapbookPage() {
   const { session } = useAuth()
   const isAdmin = !!session
 
   const [photos, setPhotos] = useState<PhotoEntry[]>([])
+  const [yearCovers, setYearCovers] = useState<YearCover[]>([])
+  const [soundtracks, setSoundtracks] = useState<Soundtrack[]>([])
+  const [soundtrackEdit, setSoundtrackEdit] = useState<SoundtrackEditTarget | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('moment')
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [scrollToMonthKey, setScrollToMonthKey] = useState<string | null>(null)
+  const [coverEditYear, setCoverEditYear] = useState<string | null>(null)
 
   const loadPhotos = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await fetchPhotos()
-      setPhotos(data)
+      const [photoData, coverData, soundtrackData] = await Promise.all([
+        fetchPhotos(),
+        fetchYearCovers().catch(() => [] as YearCover[]),
+        fetchSoundtracks().catch(() => [] as Soundtrack[]),
+      ])
+      setPhotos(photoData)
+      setYearCovers(coverData)
+      setSoundtracks(soundtrackData)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load photos'
       setError(message)
@@ -45,8 +81,68 @@ export function ScrapbookPage() {
     return [...grouped.entries()].sort(([a], [b]) => b.localeCompare(a))
   }, [photos])
 
-  const handleUploadSuccess = (photo: PhotoEntry) => {
-    setPhotos((prev) => [photo, ...prev])
+  const yearSummaries = useMemo(() => groupPhotosByYear(photos), [photos])
+
+  const coverByYear = useMemo(() => {
+    const map = new Map<number, string>()
+    for (const cover of yearCovers) {
+      map.set(cover.year, cover.image_url)
+    }
+    return map
+  }, [yearCovers])
+
+  const selectedYearPhotos = useMemo(
+    () => (selectedYear ? photosForYear(photos, selectedYear) : []),
+    [photos, selectedYear],
+  )
+
+  const editingCover = useMemo(() => {
+    if (!coverEditYear) return null
+    const yearNum = Number(coverEditYear)
+    const custom = yearCovers.find((cover) => cover.year === yearNum) ?? null
+    return {
+      year: coverEditYear,
+      customUrl: custom?.image_url ?? null,
+      hasCustomCover: !!custom,
+    }
+  }, [coverEditYear, yearCovers])
+
+  const soundtrackByKey = useMemo(() => {
+    const map = new Map<string, Soundtrack>()
+    for (const track of soundtracks) {
+      map.set(soundtrackKey(track.scope, track.scope_key), track)
+    }
+    return map
+  }, [soundtracks])
+
+  const editingSoundtrack = soundtrackEdit
+    ? soundtrackByKey.get(
+        soundtrackKey(soundtrackEdit.scope, soundtrackEdit.scopeKey),
+      ) ?? null
+    : null
+
+  const yearFeedSoundtrack =
+    viewMode === 'year' && selectedYear
+      ? soundtrackByKey.get(soundtrackKey('year', selectedYear)) ?? null
+      : null
+
+  useScopedSoundtrack(yearFeedSoundtrack, !!yearFeedSoundtrack)
+
+  useEffect(() => {
+    if (viewMode !== 'month' || !scrollToMonthKey) return
+
+    const targetId = `month-${scrollToMonthKey}`
+    const frame = window.requestAnimationFrame(() => {
+      const el = document.getElementById(targetId)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setScrollToMonthKey(null)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [viewMode, scrollToMonthKey, monthGroups])
+
+  const handleUploadSuccess = (uploaded: PhotoEntry[]) => {
+    setPhotos((prev) => [...uploaded, ...prev])
   }
 
   const handleDelete = async (photo: PhotoEntry) => {
@@ -64,7 +160,54 @@ export function ScrapbookPage() {
     }
   }
 
-  const SectionComponent = viewMode === 'moment' ? MonthSection : MonthStackSection
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (mode === 'year' && selectedYear !== null) {
+      setSelectedYear(null)
+      setViewMode('year')
+      return
+    }
+    setSelectedYear(null)
+    setViewMode(mode)
+  }
+
+  const handleSelectYear = (year: string) => {
+    setSelectedYear(year)
+    setViewMode('year')
+  }
+
+  const handleEditMonthSoundtrack = (monthKey: string) => {
+    setSoundtrackEdit({
+      scope: 'month',
+      scopeKey: monthKey,
+      label: formatMonthHeader(monthKey),
+    })
+  }
+
+  const handleEditYearSoundtrack = (year: string) => {
+    setSoundtrackEdit({ scope: 'year', scopeKey: year, label: year })
+  }
+
+  const handleSoundtrackSaved = (saved: Soundtrack | null) => {
+    if (!soundtrackEdit) return
+    const key = soundtrackKey(soundtrackEdit.scope, soundtrackEdit.scopeKey)
+
+    setSoundtracks((prev) => {
+      const without = prev.filter(
+        (track) => soundtrackKey(track.scope, track.scope_key) !== key,
+      )
+      return saved ? [...without, saved] : without
+    })
+  }
+
+  const handleCoverSaved = (cover: YearCover | null) => {
+    if (!coverEditYear) return
+    const yearNum = Number(coverEditYear)
+
+    setYearCovers((prev) => {
+      const without = prev.filter((entry) => entry.year !== yearNum)
+      return cover ? [...without, cover].sort((a, b) => b.year - a.year) : without
+    })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,10 +218,10 @@ export function ScrapbookPage() {
         <p className="mt-2 font-mono-label text-xs uppercase tracking-widest text-text-muted">
           Archive of Moments
         </p>
-        <ViewModeToggle mode={viewMode} onChange={setViewMode} />
+        <ViewModeToggle mode={viewMode} onChange={handleViewModeChange} />
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 pb-24">
+      <main className="relative mx-auto max-w-7xl px-4 pb-24">
         {loading && <LoadingSpinner message="Loading frames..." />}
 
         {error && (
@@ -93,22 +236,57 @@ export function ScrapbookPage() {
           </p>
         )}
 
-        {!loading && !error && monthGroups.length > 0 && (
-          <div
-            className={
-              viewMode === 'moment'
-                ? undefined
-                : 'grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3'
-            }
-          >
+        {!loading && !error && photos.length > 0 && viewMode === 'year' && (
+          selectedYear ? (
+            <YearFeedSection
+              year={selectedYear}
+              photos={selectedYearPhotos}
+              isAdmin={isAdmin}
+              onDelete={isAdmin ? handleDelete : undefined}
+              deletingId={deletingId}
+            />
+          ) : (
+            <YearOverviewSection
+              years={yearSummaries}
+              coverByYear={coverByYear}
+              isAdmin={isAdmin}
+              onSelectYear={handleSelectYear}
+              onEditCover={isAdmin ? setCoverEditYear : undefined}
+              soundtrackByKey={soundtrackByKey}
+              onEditSoundtrack={isAdmin ? handleEditYearSoundtrack : undefined}
+            />
+          )
+        )}
+
+        {!loading && !error && monthGroups.length > 0 && viewMode === 'moment' && (
+          <div>
             {monthGroups.map(([monthKey, monthPhotos]) => (
-              <SectionComponent
+              <MonthSection
                 key={monthKey}
                 monthKey={monthKey}
                 photos={monthPhotos}
                 isAdmin={isAdmin}
                 onDelete={isAdmin ? handleDelete : undefined}
                 deletingId={deletingId}
+              />
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && monthGroups.length > 0 && viewMode === 'month' && (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {monthGroups.map(([monthKey, monthPhotos]) => (
+              <MonthStackSection
+                key={monthKey}
+                monthKey={monthKey}
+                photos={monthPhotos}
+                isAdmin={isAdmin}
+                onDelete={isAdmin ? handleDelete : undefined}
+                deletingId={deletingId}
+                soundtrack={
+                  soundtrackByKey.get(soundtrackKey('month', monthKey)) ?? null
+                }
+                onEditSoundtrack={isAdmin ? handleEditMonthSoundtrack : undefined}
               />
             ))}
           </div>
@@ -123,6 +301,27 @@ export function ScrapbookPage() {
             onClose={() => setUploadOpen(false)}
             onSuccess={handleUploadSuccess}
           />
+          {editingCover && (
+            <YearCoverModal
+              open={!!coverEditYear}
+              year={editingCover.year}
+              currentCoverUrl={editingCover.customUrl}
+              hasCustomCover={editingCover.hasCustomCover}
+              onClose={() => setCoverEditYear(null)}
+              onSaved={handleCoverSaved}
+            />
+          )}
+          {soundtrackEdit && (
+            <SoundtrackModal
+              open={!!soundtrackEdit}
+              scope={soundtrackEdit.scope}
+              scopeKey={soundtrackEdit.scopeKey}
+              label={soundtrackEdit.label}
+              existing={editingSoundtrack}
+              onClose={() => setSoundtrackEdit(null)}
+              onSaved={handleSoundtrackSaved}
+            />
+          )}
         </>
       )}
     </div>
