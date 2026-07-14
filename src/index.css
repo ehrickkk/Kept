@@ -61,8 +61,7 @@ img {
 
 .glass-panel {
   background: rgba(28, 29, 35, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid #50504c;
 }
 

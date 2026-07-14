@@ -63,8 +63,8 @@ export function PillNavBar({
             aria-hidden="true"
             className="h-6 w-6 bg-current transition-colors duration-300 ease-out"
             style={{
-              maskImage: 'url(/public/kept-icon.png)',
-              WebkitMaskImage: 'url(/public/kept-icon.png)',
+              maskImage: 'url(/kept-icon.png)',
+              WebkitMaskImage: 'url(/kept-icon.png)',
               maskSize: 'contain',
               WebkitMaskSize: 'contain',
               maskRepeat: 'no-repeat',
