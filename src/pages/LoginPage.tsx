@@ -44,7 +44,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 pb-8 pt-20 sm:pt-16">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-20 sm:pt-16 lg:pb-8">
       <div className="relative w-full max-w-sm">
         <div className="rounded border border-border bg-surface p-6 sm:p-8">
           <h1 className="font-display mb-6 text-center text-2xl font-semibold text-text-primary">

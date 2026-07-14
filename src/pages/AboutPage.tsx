@@ -52,7 +52,7 @@ export function AboutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="relative mx-auto max-w-lg px-6 pb-24 pt-24 sm:pt-28">
+      <main className="relative mx-auto max-w-lg px-6 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-24 sm:pt-28 lg:pb-24">
         <h1 className="font-display text-3xl text-center font-semibold tracking-tight text-text-primary sm:text-4xl">
           why kept exists?
         </h1>

@@ -221,7 +221,7 @@ export function ScrapbookPage() {
         <ViewModeToggle mode={viewMode} onChange={handleViewModeChange} />
       </header>
 
-      <main className="relative mx-auto max-w-7xl px-4 pb-24">
+      <main className="relative mx-auto max-w-7xl px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-24">
         {loading && <LoadingSpinner message="Loading frames..." />}
 
         {error && (
